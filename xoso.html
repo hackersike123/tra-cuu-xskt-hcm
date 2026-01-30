@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết quả Xổ số - XSHCM & XSMB</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .lottery-section {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .lottery-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+            flex: 1;
+            min-width: 350px;
+            max-width: 500px;
+        }
+
+        .lottery-header {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .lottery-header.north {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+        }
+
+        .lottery-header h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .lottery-header .date {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .lottery-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .lottery-table th,
+        .lottery-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+
+        .lottery-table th {
+            background: #f8f9fa;
+            color: #333;
+            font-weight: bold;
+            width: 80px;
+        }
+
+        .lottery-table td {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .lottery-table .special {
+            background: #fff3cd;
+        }
+
+        .lottery-table .special td {
+            color: #e74c3c;
+            font-size: 24px;
+        }
+
+        .numbers {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .numbers span {
+            background: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        /* Check Section */
+        .check-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        .check-section h3 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 15px;
+            font-size: 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+            letter-spacing: 5px;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .region-select {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .region-select label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+            padding: 10px 20px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .region-select input[type="radio"]:checked + label,
+        .region-select label:has(input:checked) {
+            border-color: #667eea;
+            background: #f0f0ff;
+        }
+
+        .check-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .check-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .note {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fff3cd;
+            border-radius: 10px;
+            font-size: 14px;
+            color: #856404;
+        }
+
+        .note strong {
+            color: #e74c3c;
+        }
+
+        /* Result Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            animation: popIn 0.3s ease;
+        }
+
+        @keyframes popIn {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-content.win {
+            border: 5px solid #28a745;
+        }
+
+        .modal-content.lose {
+            border: 5px solid #ffc107;
+        }
+
+        .modal-content h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .modal-content.win h2 {
+            color: #28a745;
+        }
+
+        .modal-content.lose h2 {
+            color: #856404;
+        }
+
+        .modal-content p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .modal-content .prize-info {
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 18px;
+            color: #155724;
+        }
+
+        .modal-content .agency-note {
+            background: #cce5ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-size: 14px;
+            color: #004085;
+        }
+
+        .close-btn {
+            padding: 12px 40px;
+            font-size: 16px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+
+        .emoji {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        /* Confetti Animation */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: fall 3s linear forwards;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .lottery-card {
+                min-width: 100%;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎰 KẾT QUẢ XỔ SỐ KIẾN THIẾT 🎰</h1>
+
+        <!-- Check Section -->
+        <div class="check-section">
+            <h3>🔍 KIỂM TRA KẾT QUẢ DÒ SỐ</h3>
+            <div class="region-select">
+                <label>
+                    <input type="radio" name="region" value="hcm" checked> Xổ số Hồ Chí Minh
+                </label>
+                <label>
+                    <input type="radio" name="region" value="mb"> Xổ số Miền Bắc
+                </label>
+            </div>
+            <div class="input-group">
+                <input type="text" id="numberInput" maxlength="6" placeholder="Nhập số (6 số)" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            </div>
+            <button class="check-btn" onclick="checkNumber()">🎯 DÒ SỐ NGAY</button>
+            <div class="note">
+                <strong>Lưu ý:</strong> Giải ám ủi - trệt con số đầu tiên (Số hàng trăm ngàn) và tròng đủ <strong>5 số cuối cùng</strong> liền liếp theo thứ tự của giải đặc biệt.
+            </div>
+        </div>
+
+        <!-- Lottery Results -->
+        <div class="lottery-section">
+            <!-- HCM -->
+            <div class="lottery-card">
+                <div class="lottery-header">
+                    <h2>🏆 Thiết kế trang web hiển thị kết quả xổ số của tp HCM</h2>
+                    <div class="date">Kết quả Xổ số Hồ Chí Minh Thứ Hai 10-02-2025</div>
+                </div>
+                <table class="lottery-table" id="hcm-table">
+                    <tr class="special">
+                        <th>Giải ĐB</th>
+                        <td><span class="numbers"><span>544830</span></span></td>
+                    </tr>
+                    <tr>
+                        <th>Giải nhất</th>
+                        <td><span class="numbers"><span>44973</span></span></td>
+                    </tr>
+                    <tr>
+                        <th>Giải nhì</th>
+                        <td><span class="numbers"><span>22225</span><span>44551</span></span></td>
+                    </tr>
+                    <tr>
+                        <th>Giải ba</th>
+                        <td><span class="numbers"><span>61106</span><span>56209</span><span>90230</span><span>21959</span></span></td>
+                    </tr>
+                    <tr>
+                        <th>Giải tư</th>
+                        <td><span class="numbers"><span>6290</span><span>5067</span><span>7959</span><span>3988</span><span>6189</span><span>9149</span><span>4429</span></span></td>
+                    </tr>
+                    <tr>
+                        <th>Giải năm</th>
+                        <td><span class="numbers"><span>0646</span></span></td>
+                    </tr>
+                    <tr>
+                        <th>Giải sáu</th>
+                        <td><span class="numbers"><span>1432</span><span>4268</span><span>6418</span></span></td>
+                    </tr>
+                    <tr>
+                        <th>Giải bảy</th>
+                        <td><span class="numbers"><span>54</span><span>35</span></span></td>
+                    </tr>
+                    <tr>
+                        <th>Giải tám</th>
+                        <td><span class="numbers"><span>49</span></span></td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Mien Bac -->
+            <div class="lottery-card">
+                <div class="lottery-header north">
+                    <h2>🏆 Kết quả Xổ số Kiến thiết Miền Bắc</h2>
+                    <div class="date">Kết quả Xổ số Miền Bắc Thứ Hai 10-02-2025</div>
+                </div>
+                <table class="lottery-table" id="mb-table">
+                    <tr class="special">
+                        <th>Giải ĐB</th>
+                        <td><span class="numbers"><span>89456</span></span></td>
+                    </tr>
+                    <tr>
+                        <th>Giải nhất</th>
+                        <td><span class="numbers"><span>12345</span></span></td>
+                    </tr>
+                    <tr>
+                        <th>Giải nhì</th>
+                        <td><span class="numbers"><span>67890</span><span>11223</span></span></td>
+                    </tr>
+                    <tr>
+                        <th>Giải ba</th>
+                        <td><span class="numbers"><span>44556</span><span>77889</span><span>99001</span><span>22334</span><span>55667</span><span>88990</span></span></td>
+                    </tr>
+                    <tr>
+                        <th>Giải tư</th>
+                        <td><span class="numbers"><span>1234</span><span>5678</span><span>9012</span><span>3456</span></span></td>
+                    </tr>
+                    <tr>
+                        <th>Giải năm</th>
+                        <td><span class="numbers"><span>7890</span><span>1234</span><span>5678</span><span>9012</span><span>3456</span><span>7890</span></span></td>
+                    </tr>
+                    <tr>
+                        <th>Giải sáu</th>
+                        <td><span class="numbers"><span>123</span><span>456</span><span>789</span></span></td>
+                    </tr>
+                    <tr>
+                        <th>Giải bảy</th>
+                        <td><span class="numbers"><span>12</span><span>34</span><span>56</span><span>78</span></span></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Result Modal -->
+    <div class="modal" id="resultModal">
+        <div class="modal-content" id="modalContent">
+            <div class="emoji" id="emoji">🎉</div>
+            <h2 id="resultTitle">Chúc mừng!</h2>
+            <p id="resultMessage"></p>
+            <div class="prize-info" id="prizeInfo" style="display: none;"></div>
+            <div class="agency-note" id="agencyNote" style="display: none;">
+                📍 <strong>Vui lòng mang vé số đến đại lý xổ số hoặc công ty xổ số kiến thiết để đổi thưởng!</strong><br>
+                Thời hạn đổi thưởng: 30 ngày kể từ ngày quay số.
+            </div>
+            <button class="close-btn" onclick="closeModal()">Đóng</button>
+        </div>
+    </div>
+
+    <script>
+        // Prize data for HCM
+        const hcmPrizes = {
+            db: ['544830'],
+            nhat: ['44973'],
+            nhi: ['22225', '44551'],
+            ba: ['61106', '56209', '90230', '21959'],
+            tu: ['6290', '5067', '7959', '3988', '6189', '9149', '4429'],
+            nam: ['0646'],
+            sau: ['1432', '4268', '6418'],
+            bay: ['54', '35'],
+            tam: ['49']
+        };
+
+        // Prize data for Mien Bac
+        const mbPrizes = {
+            db: ['89456'],
+            nhat: ['12345'],
+            nhi: ['67890', '11223'],
+            ba: ['44556', '77889', '99001', '22334', '55667', '88990'],
+            tu: ['1234', '5678', '9012', '3456'],
+            nam: ['7890', '1234', '5678', '9012', '3456', '7890'],
+            sau: ['123', '456', '789'],
+            bay: ['12', '34', '56', '78']
+        };
+
+        const prizeNames = {
+            db: 'Giải Đặc Biệt',
+            nhat: 'Giải Nhất',
+            nhi: 'Giải Nhì',
+            ba: 'Giải Ba',
+            tu: 'Giải Tư',
+            nam: 'Giải Năm',
+            sau: 'Giải Sáu',
+            bay: 'Giải Bảy',
+            tam: 'Giải Tám',
+            anui: 'Giải An Ủi'
+        };
+
+        const prizeAmounts = {
+            db: '2.000.000.000 VNĐ',
+            nhat: '30.000.000 VNĐ',
+            nhi: '15.000.000 VNĐ',
+            ba: '10.000.000 VNĐ',
+            tu: '3.000.000 VNĐ',
+            nam: '1.000.000 VNĐ',
+            sau: '400.000 VNĐ',
+            bay: '200.000 VNĐ',
+            tam: '100.000 VNĐ',
+            anui: '50.000.000 VNĐ'
+        };
+
+        function checkNumber() {
+            const input = document.getElementById('numberInput').value.trim();
+            const region = document.querySelector('input[name="region"]:checked').value;
+            
+            if (input.length < 2) {
+                alert('Vui lòng nhập ít nhất 2 số!');
+                return;
+            }
+
+            const prizes = region === 'hcm' ? hcmPrizes : mbPrizes;
+            const regionName = region === 'hcm' ? 'Xổ số Hồ Chí Minh' : 'Xổ số Miền Bắc';
+            
+            let wonPrizes = [];
+
+            // Check each prize
+            for (let [prizeKey, numbers] of Object.entries(prizes)) {
+                for (let num of numbers) {
+                    // Get the last N digits of input based on prize number length
+                    const checkLength = num.length;
+                    const inputSuffix = input.slice(-checkLength);
+                    
+                    if (inputSuffix === num) {
+                        wonPrizes.push({
+                            prize: prizeKey,
+                            number: num,
+                            name: prizeNames[prizeKey],
+                            amount: prizeAmounts[prizeKey]
+                        });
+                    }
+                }
+            }
+
+            // Check An Ủi prize (5 last digits of special prize, different first digit)
+            if (input.length >= 6) {
+                const dbNumber = prizes.db[0];
+                const last5DB = dbNumber.slice(-5);
+                const last5Input = input.slice(-5);
+                const firstDigitDB = dbNumber[0];
+                const firstDigitInput = input[0];
+                
+                if (last5Input === last5DB && firstDigitInput !== firstDigitDB) {
+                    wonPrizes.push({
+                        prize: 'anui',
+                        number: input,
+                        name: prizeNames.anui,
+                        amount: prizeAmounts.anui
+                    });
+                }
+            }
+
+            showResult(wonPrizes, input, regionName);
+        }
+
+        function showResult(wonPrizes, inputNumber, regionName) {
+            const modal = document.getElementById('resultModal');
+            const modalContent = document.getElementById('modalContent');
+            const emoji = document.getElementById('emoji');
+            const title = document.getElementById('resultTitle');
+            const message = document.getElementById('resultMessage');
+            const prizeInfo = document.getElementById('prizeInfo');
+            const agencyNote = document.getElementById('agencyNote');
+
+            if (wonPrizes.length > 0) {
+                // WIN!
+                modalContent.className = 'modal-content win';
+                emoji.textContent = '🎉🏆🎊';
+                title.textContent = 'CHÚC MỪNG BẠN ĐÃ TRÚNG THƯỞNG!';
+                message.innerHTML = `Số <strong>${inputNumber}</strong> của bạn đã trúng ${regionName}!`;
+                
+                let prizeHtml = '';
+                wonPrizes.forEach(p => {
+                    prizeHtml += `<div>🏅 <strong>${p.name}</strong>: ${p.amount}</div>`;
+                });
+                prizeInfo.innerHTML = prizeHtml;
+                prizeInfo.style.display = 'block';
+                agencyNote.style.display = 'block';
+                
+                // Create confetti
+                createConfetti();
+            } else {
+                // LOSE
+                modalContent.className = 'modal-content lose';
+                emoji.textContent = '😢💪';
+                title.textContent = 'CHÚC BẠN MAY MẮN LẦN SAU!';
+                message.innerHTML = `Rất tiếc, số <strong>${inputNumber}</strong> chưa trúng giải nào trong ${regionName}.<br><br>
+                    🍀 Đừng nản chí! Hãy tiếp tục thử vận may của bạn!<br>
+                    📅 Kết quả xổ số được quay hàng ngày.`;
+                prizeInfo.style.display = 'none';
+                agencyNote.style.display = 'none';
+            }
+
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('resultModal');
+            modal.classList.remove('show');
+            // Remove confetti
+            document.querySelectorAll('.confetti').forEach(c => c.remove());
+        }
+
+        function createConfetti() {
+            const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c'];
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 30);
+            }
+        }
+
+        // Close modal on background click
+        document.getElementById('resultModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Enter key support
+        document.getElementById('numberInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkNumber();
+            }
+        });
+    </script>
+</body>
+</html>

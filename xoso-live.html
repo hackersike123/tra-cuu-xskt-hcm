@@ -1,0 +1,1441 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xổ Số Trực Tuyến - XSHCM & XSMB</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎰</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #e74c3c;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            animation: pulse 2s infinite;
+        }
+
+        .live-dot {
+            width: 10px;
+            height: 10px;
+            background: white;
+            border-radius: 50%;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .time-display {
+            margin-top: 15px;
+            font-size: 24px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .time-display .date {
+            font-size: 16px;
+            opacity: 0.8;
+        }
+
+        .update-info {
+            margin-top: 10px;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .countdown {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: rgba(46, 204, 113, 0.3);
+            border-radius: 10px;
+            display: inline-block;
+        }
+
+        /* Lottery Section */
+        .lottery-section {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .lottery-card {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow: hidden;
+            flex: 1;
+            min-width: 380px;
+            max-width: 550px;
+            color: #333;
+            transition: transform 0.3s;
+        }
+
+        .lottery-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .lottery-card.loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lottery-header {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+            color: white;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+        }
+
+        .lottery-header.north {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+        }
+
+        .lottery-header h2 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .lottery-header .date {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .lottery-header .status {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.3);
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+        }
+
+        .lottery-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .lottery-table th,
+        .lottery-table td {
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            text-align: center;
+        }
+
+        .lottery-table th {
+            background: #f8f9fa;
+            color: #333;
+            font-weight: bold;
+            width: 100px;
+        }
+
+        .lottery-table td {
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .lottery-table .special {
+            background: linear-gradient(90deg, #fff3cd, #ffeeba);
+        }
+
+        .lottery-table .special td {
+            color: #e74c3c;
+            font-size: 28px;
+        }
+
+        .numbers {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .numbers span {
+            background: linear-gradient(145deg, #f5f5f5, #e8e8e8);
+            padding: 5px 12px;
+            border-radius: 8px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        .numbers span:hover {
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .numbers span.highlight {
+            background: #2ecc71 !important;
+            color: white !important;
+            animation: pop 0.5s ease;
+        }
+
+        @keyframes pop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+            100% { transform: scale(1); }
+        }
+
+        /* Check Section */
+        .check-section {
+            background: rgba(255,255,255,0.95);
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            max-width: 700px;
+            margin: 0 auto 30px;
+            color: #333;
+        }
+
+        .check-section h3 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 22px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 18px;
+            font-size: 24px;
+            border: 3px solid #ddd;
+            border-radius: 12px;
+            text-align: center;
+            letter-spacing: 8px;
+            font-family: 'Courier New', monospace;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .region-select {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .region-select label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 12px 25px;
+            border: 2px solid #ddd;
+            border-radius: 12px;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .region-select label:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .region-select input[type="radio"] {
+            width: 18px;
+            height: 18px;
+        }
+
+        .region-select label:has(input:checked) {
+            border-color: #667eea;
+            background: linear-gradient(145deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .check-btn {
+            width: 100%;
+            padding: 18px;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .check-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .check-btn:active {
+            transform: translateY(0);
+        }
+
+        .note {
+            margin-top: 20px;
+            padding: 15px;
+            background: linear-gradient(90deg, #fff3cd, #ffeeba);
+            border-radius: 10px;
+            font-size: 14px;
+            color: #856404;
+            border-left: 4px solid #f39c12;
+        }
+
+        .note strong {
+            color: #e74c3c;
+        }
+
+        /* Result Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            text-align: center;
+            max-width: 550px;
+            width: 90%;
+            animation: slideIn 0.4s ease;
+            color: #333;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px) scale(0.9);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0) scale(1);
+                opacity: 1;
+            }
+        }
+
+        .modal-content.win {
+            border: 5px solid #28a745;
+            box-shadow: 0 0 50px rgba(40, 167, 69, 0.5);
+        }
+
+        .modal-content.lose {
+            border: 5px solid #ffc107;
+        }
+
+        .modal-content h2 {
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .modal-content.win h2 {
+            color: #28a745;
+        }
+
+        .modal-content.lose h2 {
+            color: #856404;
+        }
+
+        .modal-content p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+
+        .modal-content .prize-info {
+            background: linear-gradient(145deg, #d4edda, #c3e6cb);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-size: 18px;
+            color: #155724;
+        }
+
+        .modal-content .agency-note {
+            background: linear-gradient(145deg, #cce5ff, #b8daff);
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: #004085;
+            line-height: 1.8;
+        }
+
+        .close-btn {
+            padding: 15px 50px;
+            font-size: 18px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .emoji {
+            font-size: 80px;
+            margin-bottom: 15px;
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            width: 10px;
+            height: 10px;
+            top: -10px;
+            animation: fall 3s linear forwards;
+            z-index: 1001;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(100vh) rotate(720deg);
+            }
+        }
+
+        /* Refresh button */
+        .refresh-btn {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+
+        .refresh-btn:hover {
+            background: white;
+            color: #1a1a2e;
+        }
+
+        .refresh-btn.loading {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 20px;
+            opacity: 0.7;
+            font-size: 14px;
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-msg {
+            color: #e74c3c;
+            padding: 20px;
+            text-align: center;
+        }
+
+        @media (max-width: 768px) {
+            .lottery-card {
+                min-width: 100%;
+            }
+            
+            .input-group {
+                flex-direction: column;
+            }
+
+            .region-select {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .input-group input {
+                font-size: 20px;
+                letter-spacing: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎰 KẾT QUẢ XỔ SỐ TRỰC TUYẾN 🎰</h1>
+            <div class="live-indicator">
+                <span class="live-dot"></span>
+                LIVE - Cập nhật trực tiếp
+            </div>
+            <div class="time-display">
+                <div class="date" id="currentDate"></div>
+                <div id="currentTime">--:--:--</div>
+            </div>
+            <div class="countdown" id="countdown">
+                ⏰ Đang tải lịch quay số...
+            </div>
+            <div class="update-info" id="updateInfo">
+                Cập nhật lần cuối: --:--:--
+            </div>
+            <button class="refresh-btn" onclick="refreshAllData()">🔄 Làm mới kết quả</button>
+        </div>
+
+        <!-- Check Section -->
+        <div class="check-section">
+            <h3>🔍 DÒ SỐ TRỰC TUYẾN</h3>
+            <div class="region-select">
+                <label>
+                    <input type="radio" name="region" value="hcm" checked> 🏙️ Xổ số Hồ Chí Minh
+                </label>
+                <label>
+                    <input type="radio" name="region" value="mb"> 🌄 Xổ số Miền Bắc
+                </label>
+            </div>
+            <div class="input-group">
+                <input type="text" id="numberInput" maxlength="6" placeholder="Nhập số (2-6 số)" 
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            </div>
+            <button class="check-btn" onclick="checkNumber()">🎯 DÒ SỐ NGAY</button>
+            <div class="note">
+                <strong>📌 Lưu ý:</strong> Giải An Ủi - bỏ con số đầu tiên (Số hàng trăm ngàn) và trùng đủ <strong>5 số cuối cùng</strong> liên tiếp theo thứ tự của giải đặc biệt.<br>
+                📡 Dữ liệu lấy từ nguồn chính thống: xskt.com.vn, xoso.com.vn, minhngoc.net.vn<br>
+                🔄 Hệ thống tự động cập nhật kết quả mỗi 3 phút.
+            </div>
+        </div>
+
+        <!-- Lottery Results -->
+        <div class="lottery-section">
+            <!-- HCM -->
+            <div class="lottery-card" id="hcm-card">
+                <div class="lottery-header">
+                    <span class="status" id="hcm-status">🔴 LIVE</span>
+                    <h2>🏆 XỔ SỐ HỒ CHÍ MINH</h2>
+                    <div class="date" id="hcm-date">Đang tải...</div>
+                </div>
+                <table class="lottery-table">
+                    <tbody id="hcm-body">
+                        <tr><td colspan="2"><div class="spinner"></div>Đang tải kết quả...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mien Bac -->
+            <div class="lottery-card" id="mb-card">
+                <div class="lottery-header north">
+                    <span class="status" id="mb-status">🔴 LIVE</span>
+                    <h2>🏆 XỔ SỐ MIỀN BẮC</h2>
+                    <div class="date" id="mb-date">Đang tải...</div>
+                </div>
+                <table class="lottery-table">
+                    <tbody id="mb-body">
+                        <tr><td colspan="2"><div class="spinner"></div>Đang tải kết quả...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🎰 Hệ thống xổ số trực tuyến - Cập nhật tự động mỗi 3 phút</p>
+            <p>📡 Nguồn dữ liệu: xskt.com.vn | xoso.com.vn | minhngoc.net.vn</p>
+            <p>⚠️ Kết quả chỉ mang tính chất tham khảo</p>
+        </div>
+    </div>
+
+    <!-- Result Modal -->
+    <div class="modal" id="resultModal">
+        <div class="modal-content" id="modalContent">
+            <div class="emoji" id="emoji">🎉</div>
+            <h2 id="resultTitle">Chúc mừng!</h2>
+            <p id="resultMessage"></p>
+            <div class="prize-info" id="prizeInfo" style="display: none;"></div>
+            <div class="agency-note" id="agencyNote" style="display: none;">
+                📍 <strong>Vui lòng mang vé số đến đại lý xổ số hoặc công ty xổ số kiến thiết để đổi thưởng!</strong><br><br>
+                ⏰ Thời hạn đổi thưởng: 30 ngày kể từ ngày quay số.<br>
+                📞 Hotline hỗ trợ: 1900-xxxx
+            </div>
+            <button class="close-btn" onclick="closeModal()">Đóng</button>
+        </div>
+    </div>
+
+    <script>
+        // ==================== CẤU HÌNH ====================
+        const CONFIG = {
+            // Các CORS proxy để bypass CORS policy (thử lần lượt nếu cái nào fail)
+            CORS_PROXIES: [
+                'https://api.allorigins.win/raw?url=',
+                'https://corsproxy.io/?',
+                'https://api.codetabs.com/v1/proxy?quest='
+            ],
+            
+            // Các nguồn xổ số chính thống Việt Nam
+            SOURCES: {
+                hcm: [
+                    'https://xskt.com.vn/xshcm-xstp',
+                    'https://xoso.com.vn/xo-so-tphcm/xshcm-p1.html',
+                    'https://www.minhngoc.net.vn/ket-qua-xo-so/mien-nam/tp-hcm.html'
+                ],
+                mb: [
+                    'https://xskt.com.vn/xsmb',
+                    'https://xoso.com.vn/xo-so-mien-bac.html',
+                    'https://www.minhngoc.net.vn/ket-qua-xo-so/mien-bac.html'
+                ]
+            },
+            
+            // Thời gian cập nhật (3 phút)
+            REFRESH_INTERVAL: 3 * 60 * 1000,
+            
+            // Giờ quay số
+            DRAW_TIMES: {
+                hcm: { hour: 16, minute: 15 },
+                mb: { hour: 18, minute: 15 }
+            }
+        };
+
+        // ==================== DỮ LIỆU ====================
+        let lotteryData = {
+            hcm: null,
+            mb: null,
+            lastUpdate: null,
+            source: null
+        };
+
+        const prizeLabels = {
+            db: 'Giải ĐB',
+            nhat: 'Giải Nhất',
+            nhi: 'Giải Nhì',
+            ba: 'Giải Ba',
+            tu: 'Giải Tư',
+            nam: 'Giải Năm',
+            sau: 'Giải Sáu',
+            bay: 'Giải Bảy',
+            tam: 'Giải Tám'
+        };
+
+        const prizeAmounts = {
+            db: '2.000.000.000 VNĐ',
+            nhat: '30.000.000 VNĐ',
+            nhi: '15.000.000 VNĐ',
+            ba: '10.000.000 VNĐ',
+            tu: '3.000.000 VNĐ',
+            nam: '1.000.000 VNĐ',
+            sau: '400.000 VNĐ',
+            bay: '200.000 VNĐ',
+            tam: '100.000 VNĐ',
+            anui: '50.000.000 VNĐ'
+        };
+
+        // ==================== ĐỒNG HỒ ====================
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('vi-VN', { hour12: false });
+            const dateStr = now.toLocaleDateString('vi-VN', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            
+            document.getElementById('currentTime').textContent = timeStr;
+            document.getElementById('currentDate').textContent = dateStr;
+            updateCountdown(now);
+        }
+
+        function updateCountdown(now) {
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            
+            let nextDraw = '';
+            let timeLeft = '';
+            
+            // XSHCM quay lúc 16:15, XSMB quay lúc 18:15
+            if (hour < 16 || (hour === 16 && minute < 15)) {
+                const drawTime = new Date(now);
+                drawTime.setHours(16, 15, 0);
+                const diff = drawTime - now;
+                const hours = Math.floor(diff / 3600000);
+                const mins = Math.floor((diff % 3600000) / 60000);
+                timeLeft = `${hours}h ${mins}p`;
+                nextDraw = 'XSHCM (16:15)';
+            } else if (hour < 18 || (hour === 18 && minute < 15)) {
+                const drawTime = new Date(now);
+                drawTime.setHours(18, 15, 0);
+                const diff = drawTime - now;
+                const hours = Math.floor(diff / 3600000);
+                const mins = Math.floor((diff % 3600000) / 60000);
+                timeLeft = `${hours}h ${mins}p`;
+                nextDraw = 'XSMB (18:15)';
+            } else {
+                nextDraw = 'Đã quay xong hôm nay';
+                timeLeft = 'Chờ ngày mai';
+            }
+            
+            document.getElementById('countdown').innerHTML = 
+                `⏰ Quay số tiếp theo: <strong>${nextDraw}</strong> - Còn <strong>${timeLeft}</strong>`;
+        }
+
+        // ==================== PARSER HTML ====================
+        
+        // Parser cho xskt.com.vn
+        function parseXSKT(html, region) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const result = { date: '', prizes: {}, source: 'xskt.com.vn' };
+            
+            try {
+                // Lấy ngày
+                const dateEl = doc.querySelector('.ngay, .title-kqxs, h1');
+                result.date = dateEl ? dateEl.textContent.trim() : '';
+                
+                if (region === 'hcm') {
+                    // Parse XSHCM từ xskt.com.vn
+                    const rows = doc.querySelectorAll('table.kqxs tr, table.box_kqxs tr, .box-kqxs-content tr');
+                    
+                    rows.forEach(row => {
+                        const th = row.querySelector('th, td:first-child');
+                        const td = row.querySelector('td:last-child, td.giai');
+                        if (!th || !td) return;
+                        
+                        const label = th.textContent.trim().toLowerCase();
+                        const numbers = [];
+                        
+                        td.querySelectorAll('span, em, div.dayso').forEach(span => {
+                            const num = span.textContent.trim().replace(/\D/g, '');
+                            if (num) numbers.push(num);
+                        });
+                        
+                        // Nếu không có span, lấy text trực tiếp
+                        if (numbers.length === 0) {
+                            const text = td.textContent.trim();
+                            const matches = text.match(/\d+/g);
+                            if (matches) numbers.push(...matches);
+                        }
+                        
+                        if (label.includes('đặc biệt') || label.includes('đb') || label === 'db') {
+                            result.prizes.db = numbers;
+                        } else if (label.includes('nhất') || label === 'g1') {
+                            result.prizes.nhat = numbers;
+                        } else if (label.includes('nhì') || label === 'g2') {
+                            result.prizes.nhi = numbers;
+                        } else if (label.includes('ba') || label === 'g3') {
+                            result.prizes.ba = numbers;
+                        } else if (label.includes('tư') || label === 'g4') {
+                            result.prizes.tu = numbers;
+                        } else if (label.includes('năm') || label === 'g5') {
+                            result.prizes.nam = numbers;
+                        } else if (label.includes('sáu') || label === 'g6') {
+                            result.prizes.sau = numbers;
+                        } else if (label.includes('bảy') || label === 'g7') {
+                            result.prizes.bay = numbers;
+                        } else if (label.includes('tám') || label === 'g8') {
+                            result.prizes.tam = numbers;
+                        }
+                    });
+                } else {
+                    // Parse XSMB
+                    const rows = doc.querySelectorAll('table.kqxs tr, table.box_kqxs tr');
+                    rows.forEach(row => {
+                        const th = row.querySelector('th, td:first-child');
+                        const td = row.querySelector('td:last-child');
+                        if (!th || !td) return;
+                        
+                        const label = th.textContent.trim().toLowerCase();
+                        const numbers = [];
+                        
+                        td.querySelectorAll('span, em').forEach(span => {
+                            const num = span.textContent.trim().replace(/\D/g, '');
+                            if (num) numbers.push(num);
+                        });
+                        
+                        if (numbers.length === 0) {
+                            const matches = td.textContent.match(/\d+/g);
+                            if (matches) numbers.push(...matches);
+                        }
+                        
+                        if (label.includes('đặc biệt') || label.includes('đb')) {
+                            result.prizes.db = numbers;
+                        } else if (label.includes('nhất')) {
+                            result.prizes.nhat = numbers;
+                        } else if (label.includes('nhì')) {
+                            result.prizes.nhi = numbers;
+                        } else if (label.includes('ba')) {
+                            result.prizes.ba = numbers;
+                        } else if (label.includes('tư')) {
+                            result.prizes.tu = numbers;
+                        } else if (label.includes('năm')) {
+                            result.prizes.nam = numbers;
+                        } else if (label.includes('sáu')) {
+                            result.prizes.sau = numbers;
+                        } else if (label.includes('bảy')) {
+                            result.prizes.bay = numbers;
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error('Parse XSKT error:', e);
+            }
+            
+            return result;
+        }
+        
+        // Parser cho xoso.com.vn
+        function parseXoSo(html, region) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const result = { date: '', prizes: {}, source: 'xoso.com.vn' };
+            
+            try {
+                // Lấy ngày
+                const dateEl = doc.querySelector('.title-kqxs, .ngay-quay, h1');
+                result.date = dateEl ? dateEl.textContent.trim() : '';
+                
+                // Parse bảng kết quả
+                const rows = doc.querySelectorAll('.box-kqxs table tr, table.kqxs tr');
+                
+                rows.forEach(row => {
+                    const cells = row.querySelectorAll('td');
+                    if (cells.length < 2) return;
+                    
+                    const label = cells[0].textContent.trim().toLowerCase();
+                    const numbers = [];
+                    
+                    cells[1].querySelectorAll('span, em, a').forEach(el => {
+                        const num = el.textContent.trim().replace(/\D/g, '');
+                        if (num && num.length >= 2) numbers.push(num);
+                    });
+                    
+                    if (numbers.length === 0) {
+                        const matches = cells[1].textContent.match(/\d{2,}/g);
+                        if (matches) numbers.push(...matches);
+                    }
+                    
+                    if (label.includes('đặc biệt') || label.includes('đb')) {
+                        result.prizes.db = numbers;
+                    } else if (label.includes('nhất')) {
+                        result.prizes.nhat = numbers;
+                    } else if (label.includes('nhì')) {
+                        result.prizes.nhi = numbers;
+                    } else if (label.includes('ba')) {
+                        result.prizes.ba = numbers;
+                    } else if (label.includes('tư')) {
+                        result.prizes.tu = numbers;
+                    } else if (label.includes('năm')) {
+                        result.prizes.nam = numbers;
+                    } else if (label.includes('sáu')) {
+                        result.prizes.sau = numbers;
+                    } else if (label.includes('bảy')) {
+                        result.prizes.bay = numbers;
+                    } else if (label.includes('tám')) {
+                        result.prizes.tam = numbers;
+                    }
+                });
+            } catch (e) {
+                console.error('Parse XoSo error:', e);
+            }
+            
+            return result;
+        }
+        
+        // Parser cho minhngoc.net.vn
+        function parseMinhNgoc(html, region) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const result = { date: '', prizes: {}, source: 'minhngoc.net.vn' };
+            
+            try {
+                // Lấy ngày
+                const dateEl = doc.querySelector('.title, .ngay, h1, .box-title');
+                result.date = dateEl ? dateEl.textContent.trim() : '';
+                
+                // Parse bảng kết quả - Minh Ngọc có cấu trúc riêng
+                const table = doc.querySelector('table.bkqtinhminh, table.box_kqxs, table.kqxs');
+                if (table) {
+                    const rows = table.querySelectorAll('tr');
+                    
+                    rows.forEach(row => {
+                        const th = row.querySelector('th, td.giai');
+                        const td = row.querySelector('td:not(.giai), td:last-child');
+                        if (!th || !td) return;
+                        
+                        const label = th.textContent.trim().toLowerCase();
+                        const numbers = [];
+                        
+                        td.querySelectorAll('span, em, div').forEach(el => {
+                            const num = el.textContent.trim().replace(/\D/g, '');
+                            if (num && num.length >= 2) numbers.push(num);
+                        });
+                        
+                        if (numbers.length === 0) {
+                            const matches = td.textContent.match(/\d{2,}/g);
+                            if (matches) numbers.push(...matches);
+                        }
+                        
+                        if (label.includes('đặc biệt') || label.includes('đb') || label === 'đb') {
+                            result.prizes.db = numbers;
+                        } else if (label.includes('nhất') || label.includes('g.1') || label === '1') {
+                            result.prizes.nhat = numbers;
+                        } else if (label.includes('nhì') || label.includes('g.2') || label === '2') {
+                            result.prizes.nhi = numbers;
+                        } else if (label.includes('ba') || label.includes('g.3') || label === '3') {
+                            result.prizes.ba = numbers;
+                        } else if (label.includes('tư') || label.includes('g.4') || label === '4') {
+                            result.prizes.tu = numbers;
+                        } else if (label.includes('năm') || label.includes('g.5') || label === '5') {
+                            result.prizes.nam = numbers;
+                        } else if (label.includes('sáu') || label.includes('g.6') || label === '6') {
+                            result.prizes.sau = numbers;
+                        } else if (label.includes('bảy') || label.includes('g.7') || label === '7') {
+                            result.prizes.bay = numbers;
+                        } else if (label.includes('tám') || label.includes('g.8') || label === '8') {
+                            result.prizes.tam = numbers;
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error('Parse MinhNgoc error:', e);
+            }
+            
+            return result;
+        }
+
+        // Chọn parser phù hợp dựa trên URL
+        function parseHTML(html, url, region) {
+            if (url.includes('xskt.com.vn')) {
+                return parseXSKT(html, region);
+            } else if (url.includes('xoso.com.vn')) {
+                return parseXoSo(html, region);
+            } else if (url.includes('minhngoc.net.vn')) {
+                return parseMinhNgoc(html, region);
+            }
+            return null;
+        }
+
+        // Kiểm tra dữ liệu hợp lệ
+        function isValidData(data) {
+            if (!data || !data.prizes) return false;
+            // Phải có ít nhất giải ĐB
+            if (!data.prizes.db || data.prizes.db.length === 0) return false;
+            // Phải có ít nhất 3 giải
+            const prizeCount = Object.keys(data.prizes).filter(k => data.prizes[k] && data.prizes[k].length > 0).length;
+            return prizeCount >= 3;
+        }
+
+        // ==================== FETCH DỮ LIỆU TỪ NGUỒN CHÍNH THỐNG ====================
+        
+        async function fetchWithProxy(url, proxyUrl) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            
+            try {
+                const response = await fetch(proxyUrl + encodeURIComponent(url), {
+                    signal: controller.signal,
+                    headers: {
+                        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+                    }
+                });
+                clearTimeout(timeoutId);
+                
+                if (response.ok) {
+                    return await response.text();
+                }
+            } catch (e) {
+                clearTimeout(timeoutId);
+                throw e;
+            }
+            return null;
+        }
+
+        async function fetchFromOfficialSources(region) {
+            const sources = CONFIG.SOURCES[region];
+            const proxies = CONFIG.CORS_PROXIES;
+            
+            // Thử từng nguồn với từng proxy
+            for (const sourceUrl of sources) {
+                for (const proxyUrl of proxies) {
+                    try {
+                        console.log(`🔍 Đang thử: ${sourceUrl} qua ${proxyUrl}`);
+                        const html = await fetchWithProxy(sourceUrl, proxyUrl);
+                        
+                        if (html && html.length > 1000) {
+                            const data = parseHTML(html, sourceUrl, region);
+                            
+                            if (isValidData(data)) {
+                                console.log(`✅ Lấy thành công từ ${sourceUrl}`);
+                                data.sourceUrl = sourceUrl;
+                                return data;
+                            }
+                        }
+                    } catch (e) {
+                        console.log(`❌ Lỗi với ${sourceUrl}: ${e.message}`);
+                    }
+                }
+            }
+            
+            return null;
+        }
+
+        // Lấy dữ liệu từ localStorage
+        function getStoredData(region) {
+            const stored = localStorage.getItem(`lottery_${region}`);
+            if (stored) {
+                try {
+                    const data = JSON.parse(stored);
+                    const storedDate = new Date(data.timestamp);
+                    const now = new Date();
+                    
+                    // Kiểm tra dữ liệu còn hợp lệ (trong ngày và chưa quá 30 phút)
+                    const diffMinutes = (now - storedDate) / 60000;
+                    if (storedDate.toDateString() === now.toDateString() && diffMinutes < 30) {
+                        return data;
+                    }
+                } catch (e) {
+                    console.error('Error parsing stored data:', e);
+                }
+            }
+            return null;
+        }
+
+        // Lưu dữ liệu vào localStorage
+        function storeData(region, data) {
+            const storeObj = {
+                ...data,
+                timestamp: new Date().toISOString()
+            };
+            localStorage.setItem(`lottery_${region}`, JSON.stringify(storeObj));
+        }
+
+        // Tạo dữ liệu mẫu (fallback)
+        function generateFallbackData(region) {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('vi-VN', { 
+                weekday: 'long', 
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+
+            const gen = (len) => {
+                let r = '';
+                for (let i = 0; i < len; i++) r += Math.floor(Math.random() * 10);
+                return r;
+            };
+
+            if (region === 'hcm') {
+                return {
+                    date: `Xổ số TP.HCM - ${dateStr}`,
+                    prizes: {
+                        db: [gen(6)], nhat: [gen(5)], nhi: [gen(5), gen(5)],
+                        ba: [gen(5), gen(5), gen(5), gen(5)],
+                        tu: [gen(4), gen(4), gen(4), gen(4), gen(4), gen(4), gen(4)],
+                        nam: [gen(4)], sau: [gen(4), gen(4), gen(4)],
+                        bay: [gen(2), gen(2)], tam: [gen(2)]
+                    },
+                    source: 'Demo',
+                    isDemo: true
+                };
+            } else {
+                return {
+                    date: `Xổ số Miền Bắc - ${dateStr}`,
+                    prizes: {
+                        db: [gen(5)], nhat: [gen(5)], nhi: [gen(5), gen(5)],
+                        ba: [gen(5), gen(5), gen(5), gen(5), gen(5), gen(5)],
+                        tu: [gen(4), gen(4), gen(4), gen(4)],
+                        nam: [gen(4), gen(4), gen(4), gen(4), gen(4), gen(4)],
+                        sau: [gen(3), gen(3), gen(3)],
+                        bay: [gen(2), gen(2), gen(2), gen(2)]
+                    },
+                    source: 'Demo',
+                    isDemo: true
+                };
+            }
+        }
+
+        // Hàm chính fetch kết quả xổ số
+        async function fetchLotteryData(region, forceRefresh = false) {
+            const statusEl = document.getElementById(`${region}-status`);
+            statusEl.textContent = '⏳ Đang tải...';
+            
+            try {
+                // Kiểm tra cache trước (nếu không force refresh)
+                if (!forceRefresh) {
+                    const cached = getStoredData(region);
+                    if (cached && isValidData(cached)) {
+                        lotteryData[region] = cached;
+                        renderLotteryTable(region, cached);
+                        statusEl.textContent = '✅ ' + (cached.source || 'Cached');
+                        lotteryData.lastUpdate = new Date(cached.timestamp);
+                        updateLastUpdateInfo();
+                        return;
+                    }
+                }
+                
+                // Fetch từ nguồn chính thống
+                const data = await fetchFromOfficialSources(region);
+                
+                if (data && isValidData(data)) {
+                    lotteryData[region] = data;
+                    storeData(region, data);
+                    renderLotteryTable(region, data);
+                    statusEl.textContent = '🔴 ' + (data.source || 'LIVE');
+                    lotteryData.lastUpdate = new Date();
+                    updateLastUpdateInfo();
+                    console.log(`✅ ${region.toUpperCase()}: Lấy dữ liệu thành công từ ${data.source}`);
+                    return;
+                }
+                
+                // Fallback: dùng dữ liệu mẫu
+                console.log(`⚠️ ${region.toUpperCase()}: Không lấy được dữ liệu thực, dùng demo`);
+                const fallback = generateFallbackData(region);
+                lotteryData[region] = fallback;
+                renderLotteryTable(region, fallback);
+                statusEl.textContent = '🟡 Demo';
+                
+            } catch (error) {
+                console.error(`Error fetching ${region}:`, error);
+                const fallback = generateFallbackData(region);
+                lotteryData[region] = fallback;
+                renderLotteryTable(region, fallback);
+                statusEl.textContent = '🟡 Demo';
+            }
+            
+            lotteryData.lastUpdate = new Date();
+            updateLastUpdateInfo();
+        }
+
+        function updateLastUpdateInfo() {
+            if (lotteryData.lastUpdate) {
+                const timeStr = lotteryData.lastUpdate.toLocaleTimeString('vi-VN');
+                let sourceInfo = '';
+                if (lotteryData.hcm && lotteryData.hcm.source) {
+                    sourceInfo = ` | Nguồn: ${lotteryData.hcm.source}`;
+                }
+                document.getElementById('updateInfo').innerHTML = 
+                    `Cập nhật lần cuối: <strong>${timeStr}</strong>${sourceInfo}`;
+            }
+        }
+
+        function renderLotteryTable(region, data) {
+            const tbody = document.getElementById(`${region}-body`);
+            const dateEl = document.getElementById(`${region}-date`);
+            
+            let dateText = data.date || 'Kết quả mới nhất';
+            if (data.isDemo) {
+                dateText += ' <span style="background:#f39c12;color:white;padding:2px 8px;border-radius:5px;font-size:10px;">DEMO</span>';
+            }
+            dateEl.innerHTML = dateText;
+            
+            let html = '';
+            const prizeOrder = ['db', 'nhat', 'nhi', 'ba', 'tu', 'nam', 'sau', 'bay', 'tam'];
+            
+            prizeOrder.forEach(prize => {
+                if (data.prizes && data.prizes[prize] && data.prizes[prize].length > 0) {
+                    const isSpecial = prize === 'db';
+                    html += `<tr class="${isSpecial ? 'special' : ''}">`;
+                    html += `<th>${prizeLabels[prize]}</th>`;
+                    html += `<td><span class="numbers">`;
+                    
+                    data.prizes[prize].forEach(num => {
+                        html += `<span data-number="${num}" data-region="${region}">${num}</span>`;
+                    });
+                    
+                    html += `</span></td></tr>`;
+                }
+            });
+            
+            tbody.innerHTML = html || '<tr><td colspan="2" class="error-msg">Không có dữ liệu</td></tr>';
+        }
+
+        // ==================== LÀM MỚI ====================
+        async function refreshAllData() {
+            const btn = document.querySelector('.refresh-btn');
+            btn.classList.add('loading');
+            btn.textContent = '⏳ Đang cập nhật từ nguồn chính thống...';
+            
+            // Xóa cache
+            localStorage.removeItem('lottery_hcm');
+            localStorage.removeItem('lottery_mb');
+            
+            await Promise.all([
+                fetchLotteryData('hcm', true),
+                fetchLotteryData('mb', true)
+            ]);
+            
+            btn.classList.remove('loading');
+            btn.textContent = '🔄 Làm mới kết quả';
+        }
+
+        // ==================== KIỂM TRA SỐ ====================
+        function checkNumber() {
+            const input = document.getElementById('numberInput').value.trim();
+            const region = document.querySelector('input[name="region"]:checked').value;
+            
+            if (input.length < 2) {
+                alert('Vui lòng nhập ít nhất 2 số!');
+                return;
+            }
+
+            const data = lotteryData[region];
+            if (!data || !data.prizes) {
+                alert('Chưa có dữ liệu xổ số. Vui lòng đợi hoặc làm mới!');
+                return;
+            }
+
+            const regionName = region === 'hcm' ? 'Xổ số Hồ Chí Minh' : 'Xổ số Miền Bắc';
+            let wonPrizes = [];
+
+            // Xóa highlight cũ
+            document.querySelectorAll('.numbers span.highlight').forEach(el => {
+                el.classList.remove('highlight');
+            });
+
+            // Kiểm tra từng giải
+            for (let [prizeKey, numbers] of Object.entries(data.prizes)) {
+                if (!numbers) continue;
+                
+                for (let num of numbers) {
+                    const checkLength = num.length;
+                    const inputSuffix = input.slice(-checkLength);
+                    
+                    if (inputSuffix === num || num.endsWith(input)) {
+                        wonPrizes.push({
+                            prize: prizeKey,
+                            number: num,
+                            name: prizeLabels[prizeKey],
+                            amount: prizeAmounts[prizeKey]
+                        });
+
+                        // Highlight số trúng
+                        document.querySelectorAll(`span[data-number="${num}"][data-region="${region}"]`).forEach(el => {
+                            el.classList.add('highlight');
+                        });
+                    }
+                }
+            }
+
+            // Kiểm tra giải an ủi (5 số cuối trùng với ĐB nhưng số đầu khác)
+            if (input.length >= 6 && data.prizes.db && data.prizes.db[0]) {
+                const dbNumber = data.prizes.db[0];
+                if (dbNumber.length >= 5) {
+                    const last5DB = dbNumber.slice(-5);
+                    const last5Input = input.slice(-5);
+                    const firstDigitDB = dbNumber[0];
+                    const firstDigitInput = input[0];
+                    
+                    if (last5Input === last5DB && firstDigitInput !== firstDigitDB) {
+                        // Kiểm tra xem chưa trúng ĐB
+                        if (!wonPrizes.some(p => p.prize === 'db')) {
+                            wonPrizes.push({
+                                prize: 'anui',
+                                number: input,
+                                name: 'Giải An Ủi',
+                                amount: prizeAmounts.anui
+                            });
+                        }
+                    }
+                }
+            }
+
+            showResult(wonPrizes, input, regionName);
+        }
+
+        function showResult(wonPrizes, inputNumber, regionName) {
+            const modal = document.getElementById('resultModal');
+            const modalContent = document.getElementById('modalContent');
+            const emoji = document.getElementById('emoji');
+            const title = document.getElementById('resultTitle');
+            const message = document.getElementById('resultMessage');
+            const prizeInfo = document.getElementById('prizeInfo');
+            const agencyNote = document.getElementById('agencyNote');
+
+            if (wonPrizes.length > 0) {
+                modalContent.className = 'modal-content win';
+                emoji.textContent = '🎉🏆🎊';
+                title.textContent = 'CHÚC MỪNG BẠN ĐÃ TRÚNG THƯỞNG!';
+                message.innerHTML = `Số <strong style="font-size: 24px; color: #e74c3c;">${inputNumber}</strong> đã trúng ${regionName}!`;
+                
+                let prizeHtml = '';
+                wonPrizes.forEach(p => {
+                    prizeHtml += `<div style="margin: 10px 0;">🏅 <strong>${p.name}</strong><br>💰 ${p.amount}</div>`;
+                });
+                prizeInfo.innerHTML = prizeHtml;
+                prizeInfo.style.display = 'block';
+                agencyNote.style.display = 'block';
+                
+                createConfetti();
+            } else {
+                modalContent.className = 'modal-content lose';
+                emoji.textContent = '😢💪🍀';
+                title.textContent = 'CHÚC BẠN MAY MẮN LẦN SAU!';
+                message.innerHTML = `
+                    Rất tiếc, số <strong style="font-size: 20px;">${inputNumber}</strong> chưa trúng giải nào trong ${regionName}.<br><br>
+                    🍀 Đừng nản chí! Hãy tiếp tục thử vận may!<br>
+                    📅 Kết quả xổ số được quay hàng ngày.<br>
+                    🎯 Thử dò với số khác hoặc vùng khác!
+                `;
+                prizeInfo.style.display = 'none';
+                agencyNote.style.display = 'none';
+            }
+
+            modal.classList.add('show');
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('resultModal');
+            modal.classList.remove('show');
+            document.querySelectorAll('.confetti').forEach(c => c.remove());
+        }
+
+        function createConfetti() {
+            const colors = ['#e74c3c', '#3498db', '#2ecc71', '#f39c12', '#9b59b6', '#1abc9c', '#e91e63', '#00bcd4'];
+            for (let i = 0; i < 150; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.className = 'confetti';
+                    confetti.style.left = Math.random() * 100 + 'vw';
+                    confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                    confetti.style.width = (Math.random() * 10 + 5) + 'px';
+                    confetti.style.height = confetti.style.width;
+                    confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                    document.body.appendChild(confetti);
+                    
+                    setTimeout(() => confetti.remove(), 4000);
+                }, i * 20);
+            }
+        }
+
+        // ==================== EVENT LISTENERS ====================
+        document.getElementById('resultModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        document.getElementById('numberInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkNumber();
+        });
+
+        // Escape key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // ==================== KHỞI ĐỘNG ====================
+        function init() {
+            console.log('🎰 Khởi động hệ thống xổ số trực tuyến...');
+            
+            // Cập nhật đồng hồ
+            updateClock();
+            setInterval(updateClock, 1000);
+            
+            // Fetch dữ liệu ban đầu
+            fetchLotteryData('hcm');
+            fetchLotteryData('mb');
+            
+            // Tự động cập nhật mỗi 5 phút
+            setInterval(() => {
+                console.log('🔄 Tự động cập nhật kết quả...');
+                fetchLotteryData('hcm');
+                fetchLotteryData('mb');
+            }, CONFIG.REFRESH_INTERVAL);
+            
+            console.log('✅ Hệ thống đã sẵn sàng!');
+        }
+
+        // Khởi động khi trang load xong
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

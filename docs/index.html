@@ -397,11 +397,13 @@
     <canvas class="confetti" id="confetti"></canvas>
 
     <script>
-        // CORS Proxies để fetch data
+        // CORS Proxies để fetch data (nhiều backup)
         const CORS_PROXIES = [
             'https://api.allorigins.win/raw?url=',
             'https://corsproxy.io/?',
-            'https://api.codetabs.com/v1/proxy?quest='
+            'https://api.codetabs.com/v1/proxy?quest=',
+            'https://thingproxy.freeboard.io/fetch/',
+            'https://cors-anywhere.herokuapp.com/'
         ];
 
         let currentData = null;
