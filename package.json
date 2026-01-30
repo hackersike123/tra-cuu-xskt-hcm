@@ -1,0 +1,19 @@
+{
+  "name": "xoso-live",
+  "version": "1.0.0",
+  "description": "Trang web xổ số trực tuyến - Lấy dữ liệu từ nguồn chính thống Việt Nam",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": ["xoso", "lottery", "vietnam", "xskt", "xsmb", "xshcm"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "axios": "^1.6.0",
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5"
+  }
+}
