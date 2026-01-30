@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XSHCM - Xổ Số TP.Hồ Chí Minh Trực Tuyến</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎰</text></svg>">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            background: linear-gradient(90deg, #e94560, #ff6b6b);
+            border-radius: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(233, 69, 96, 0.3);
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .date-info {
+            background: rgba(255,255,255,0.1);
+            padding: 15px 25px;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 15px;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        .result-table {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        .result-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .result-table th,
+        .result-table td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .result-table th {
+            background: linear-gradient(90deg, #e94560, #ff6b6b);
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        .prize-name {
+            background: rgba(233, 69, 96, 0.2);
+            font-weight: bold;
+            width: 100px;
+            color: #ff6b6b;
+        }
+
+        .prize-numbers {
+            font-size: 1.4rem;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .prize-numbers span {
+            display: inline-block;
+            margin: 5px 10px;
+            padding: 8px 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .prize-numbers span:hover {
+            background: rgba(233, 69, 96, 0.3);
+            transform: scale(1.05);
+        }
+
+        .special-prize .prize-numbers span {
+            background: linear-gradient(90deg, #ffd700, #ffed4a);
+            color: #1a1a2e;
+            font-size: 1.8rem;
+            padding: 12px 25px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .g1-prize .prize-numbers span {
+            background: linear-gradient(90deg, #c0c0c0, #e8e8e8);
+            color: #1a1a2e;
+            font-size: 1.5rem;
+        }
+
+        .check-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .check-section h3 {
+            margin-bottom: 20px;
+            color: #ff6b6b;
+        }
+
+        .check-input {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .check-input input {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px 20px;
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            font-size: 1.1rem;
+        }
+
+        .check-input input:focus {
+            outline: none;
+            border-color: #e94560;
+        }
+
+        .check-input button {
+            padding: 15px 30px;
+            background: linear-gradient(90deg, #e94560, #ff6b6b);
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .check-input button:hover {
+            transform: scale(1.05);
+        }
+
+        .check-result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .check-result.win {
+            display: block;
+            background: linear-gradient(90deg, rgba(39, 174, 96, 0.3), rgba(46, 204, 113, 0.3));
+            border: 2px solid #2ecc71;
+        }
+
+        .check-result.lose {
+            display: block;
+            background: rgba(255,255,255,0.1);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 50px;
+        }
+
+        .loading .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255,255,255,0.1);
+            border-top-color: #e94560;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: rgba(231, 76, 60, 0.2);
+            border: 2px solid #e74c3c;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .status-bar .source {
+            color: #2ecc71;
+        }
+
+        .status-bar button {
+            padding: 10px 20px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .status-bar button:hover {
+            background: #e94560;
+        }
+
+        .dau-duoi {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .dau-duoi > div {
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .dau-duoi h4 {
+            color: #ff6b6b;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .dau-duoi table {
+            width: 100%;
+            font-size: 0.9rem;
+        }
+
+        .dau-duoi td {
+            padding: 5px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .agency-info {
+            background: linear-gradient(135deg, rgba(233, 69, 96, 0.2), rgba(255, 107, 107, 0.1));
+            border: 1px solid rgba(233, 69, 96, 0.3);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .agency-info h3 {
+            color: #ff6b6b;
+            margin-bottom: 15px;
+        }
+
+        .agency-info p {
+            margin: 8px 0;
+        }
+
+        .agency-info a {
+            color: #4fc3f7;
+            text-decoration: none;
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .prize-numbers {
+                font-size: 1.1rem;
+            }
+            
+            .prize-numbers span {
+                margin: 3px 5px;
+                padding: 5px 10px;
+            }
+            
+            .special-prize .prize-numbers span {
+                font-size: 1.4rem;
+            }
+            
+            .dau-duoi {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .highlight {
+            animation: highlight 2s ease-in-out;
+        }
+
+        @keyframes highlight {
+            0%, 100% { background: rgba(255,255,255,0.1); }
+            50% { background: rgba(233, 69, 96, 0.5); }
+        }
+
+        /* Confetti */
+        .confetti {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎰 XỔ SỐ TP.HỒ CHÍ MINH</h1>
+            <p>Kết quả xổ số trực tuyến - Cập nhật nhanh nhất</p>
+            <div class="date-info" id="lottery-date">Đang tải...</div>
+        </header>
+
+        <div class="status-bar">
+            <span>Nguồn: <span class="source" id="data-source">xskt.com.vn</span></span>
+            <span id="last-update">Đang cập nhật...</span>
+            <button onclick="fetchLotteryData(true)">🔄 Làm mới</button>
+        </div>
+
+        <div class="check-section">
+            <h3>🔍 Dò số của bạn</h3>
+            <div class="check-input">
+                <input type="text" id="check-number" placeholder="Nhập số cần dò (VD: 683111)" maxlength="6">
+                <button onclick="checkNumber()">Dò số</button>
+            </div>
+            <div class="check-result" id="check-result"></div>
+        </div>
+
+        <div class="result-table" id="result-container">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Đang tải kết quả xổ số...</p>
+            </div>
+        </div>
+
+        <div class="agency-info">
+            <h3>📞 ĐẠI LÝ XỔ SỐ UY TÍN</h3>
+            <p><strong>Liên hệ đặt vé:</strong> 0909 XXX XXX</p>
+            <p><strong>Zalo:</strong> 0909 XXX XXX</p>
+            <p>🎫 Giao vé tận nơi - Thanh toán khi nhận</p>
+        </div>
+
+        <footer>
+            <p>© 2026 XSHCM Trực Tuyến | Dữ liệu từ xskt.com.vn</p>
+            <p>Lịch quay: Thứ 2 & Thứ 7 lúc 16:15</p>
+        </footer>
+    </div>
+
+    <canvas class="confetti" id="confetti"></canvas>
+
+    <script>
+        // CORS Proxies để fetch data (nhiều backup)
+        const CORS_PROXIES = [
+            'https://api.allorigins.win/raw?url=',
+            'https://corsproxy.io/?',
+            'https://api.codetabs.com/v1/proxy?quest=',
+            'https://thingproxy.freeboard.io/fetch/',
+            'https://cors-anywhere.herokuapp.com/'
+        ];
+
+        let currentData = null;
+        let currentProxyIndex = 0;
+
+        // Fetch lottery data
+        async function fetchLotteryData(forceRefresh = false) {
+            const container = document.getElementById('result-container');
+            container.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Đang tải kết quả xổ số...</p>
+                </div>
+            `;
+
+            const targetUrl = 'https://xskt.com.vn/xshcm-xstp';
+            
+            for (let i = 0; i < CORS_PROXIES.length; i++) {
+                const proxyIndex = (currentProxyIndex + i) % CORS_PROXIES.length;
+                const proxyUrl = CORS_PROXIES[proxyIndex] + encodeURIComponent(targetUrl);
+                
+                try {
+                    console.log(`Trying proxy ${proxyIndex + 1}...`);
+                    const response = await fetch(proxyUrl, {
+                        headers: {
+                            'Accept': 'text/html'
+                        }
+                    });
+                    
+                    if (!response.ok) continue;
+                    
+                    const html = await response.text();
+                    const data = parseXSKT(html);
+                    
+                    if (data && data.prizes.db.length > 0) {
+                        currentData = data;
+                        currentProxyIndex = proxyIndex;
+                        displayResults(data);
+                        document.getElementById('last-update').textContent = 
+                            `Cập nhật: ${new Date().toLocaleTimeString('vi-VN')}`;
+                        return;
+                    }
+                } catch (error) {
+                    console.error(`Proxy ${proxyIndex + 1} failed:`, error);
+                }
+            }
+
+            // All proxies failed
+            container.innerHTML = `
+                <div class="error">
+                    <h3>⚠️ Không thể tải dữ liệu</h3>
+                    <p>Vui lòng thử lại sau hoặc truy cập trực tiếp:</p>
+                    <p><a href="https://xskt.com.vn/xshcm-xstp" target="_blank" style="color: #4fc3f7">xskt.com.vn/xshcm-xstp</a></p>
+                    <button onclick="fetchLotteryData(true)" style="margin-top: 15px; padding: 10px 20px; background: #e94560; border: none; border-radius: 5px; color: white; cursor: pointer;">Thử lại</button>
+                </div>
+            `;
+        }
+
+        // Parse HTML from xskt.com.vn
+        function parseXSKT(html) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            
+            const result = {
+                date: '',
+                prizes: {
+                    g8: [], g7: [], g6: [], g5: [], g4: [], g3: [], g2: [], g1: [], db: []
+                },
+                dauDuoi: { dau: [], duoi: [] },
+                source: 'xskt.com.vn'
+            };
+
+            // Get date
+            const dateLink = doc.querySelector('a[href*="/xshcm-xstp/ngay-"]');
+            if (dateLink) {
+                const dateMatch = dateLink.textContent.match(/(\d{1,2}[-\/]\d{1,2})/);
+                if (dateMatch) {
+                    result.date = `Xổ số TP.HCM ngày ${dateMatch[1].replace('-', '/')}`;
+                }
+            }
+            if (!result.date) {
+                result.date = 'Xổ số TP.HCM - Kết quả mới nhất';
+            }
+
+            // Find result table
+            const mainTable = doc.querySelector('table.result');
+            if (!mainTable) {
+                console.error('Could not find result table');
+                return null;
+            }
+
+            // Parse each row
+            const rows = mainTable.querySelectorAll('tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length < 2) return;
+
+                const prizeCell = cells[0];
+                const prizeText = prizeCell.textContent.trim().toUpperCase();
+
+                if (!/^(G\d|ĐB|DB)$/.test(prizeText)) return;
+
+                const numberCell = cells[1];
+                let numbers = [];
+
+                // Get HTML and process
+                let cellHtml = numberCell.innerHTML || '';
+                
+                // Replace <br> with space
+                cellHtml = cellHtml.replace(/<br\s*\/?>/gi, ' ');
+                // Remove all HTML tags
+                cellHtml = cellHtml.replace(/<[^>]*>/g, ' ');
+                // Normalize spaces
+                cellHtml = cellHtml.replace(/\s+/g, ' ').trim();
+
+                // Split by space
+                const parts = cellHtml.split(/\s+/);
+                parts.forEach(part => {
+                    const num = part.replace(/\D/g, '');
+                    if (num && num.length >= 2 && num.length <= 6) {
+                        numbers.push(num);
+                    }
+                });
+
+                // Assign prizes
+                if (prizeText === 'G8') {
+                    result.prizes.g8 = numbers;
+                } else if (prizeText === 'G7') {
+                    result.prizes.g7 = numbers;
+                } else if (prizeText === 'G6') {
+                    result.prizes.g6 = numbers;
+                } else if (prizeText === 'G5') {
+                    result.prizes.g5 = numbers;
+                } else if (prizeText === 'G4') {
+                    if (result.prizes.g4.length === 0) {
+                        result.prizes.g4 = numbers;
+                    } else {
+                        result.prizes.g4.push(...numbers);
+                    }
+                } else if (prizeText === 'G3') {
+                    result.prizes.g3 = numbers;
+                } else if (prizeText === 'G2') {
+                    result.prizes.g2 = numbers;
+                } else if (prizeText === 'G1') {
+                    result.prizes.g1 = numbers;
+                } else if (prizeText === 'ĐB' || prizeText === 'DB') {
+                    result.prizes.db = numbers;
+                }
+            });
+
+            // Parse Đầu-Đuôi
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 4) {
+                    const dauVal = cells[2].textContent.trim();
+                    const duoiVal = cells[3].textContent.trim();
+                    if (/^\d$/.test(dauVal) || dauVal.includes(',')) {
+                        result.dauDuoi.dau.push(dauVal);
+                    }
+                    if (duoiVal && duoiVal !== '') {
+                        result.dauDuoi.duoi.push(duoiVal);
+                    }
+                }
+            });
+
+            console.log('Parsed:', result.prizes);
+            return result;
+        }
+
+        // Display results
+        function displayResults(data) {
+            document.getElementById('lottery-date').textContent = data.date;
+            
+            const prizeRows = [
+                { key: 'g8', name: 'G.8', class: '' },
+                { key: 'g7', name: 'G.7', class: '' },
+                { key: 'g6', name: 'G.6', class: '' },
+                { key: 'g5', name: 'G.5', class: '' },
+                { key: 'g4', name: 'G.4', class: '' },
+                { key: 'g3', name: 'G.3', class: '' },
+                { key: 'g2', name: 'G.2', class: '' },
+                { key: 'g1', name: 'G.1', class: 'g1-prize' },
+                { key: 'db', name: 'ĐB', class: 'special-prize' }
+            ];
+
+            let html = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Giải</th>
+                            <th>Kết quả</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+
+            prizeRows.forEach(prize => {
+                const numbers = data.prizes[prize.key] || [];
+                const numbersHtml = numbers.map(n => `<span>${n}</span>`).join('');
+                html += `
+                    <tr class="${prize.class}">
+                        <td class="prize-name">${prize.name}</td>
+                        <td class="prize-numbers">${numbersHtml || '-'}</td>
+                    </tr>
+                `;
+            });
+
+            html += '</tbody></table>';
+
+            // Add Đầu-Đuôi if available
+            if (data.dauDuoi && (data.dauDuoi.dau.length > 0 || data.dauDuoi.duoi.length > 0)) {
+                html += `
+                    <div class="dau-duoi">
+                        <div>
+                            <h4>Đầu</h4>
+                            <table>
+                                ${data.dauDuoi.dau.map((d, i) => `<tr><td>${i}</td><td>${d}</td></tr>`).join('')}
+                            </table>
+                        </div>
+                        <div>
+                            <h4>Đuôi</h4>
+                            <table>
+                                ${data.dauDuoi.duoi.map((d, i) => `<tr><td>${i}</td><td>${d}</td></tr>`).join('')}
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            document.getElementById('result-container').innerHTML = html;
+        }
+
+        // Check number
+        function checkNumber() {
+            const input = document.getElementById('check-number').value.trim();
+            const resultDiv = document.getElementById('check-result');
+            
+            if (!input || !currentData) {
+                resultDiv.className = 'check-result';
+                resultDiv.style.display = 'none';
+                return;
+            }
+
+            const allPrizes = [
+                { name: 'Giải Đặc Biệt', numbers: currentData.prizes.db, prize: '2 tỷ đồng' },
+                { name: 'Giải Nhất', numbers: currentData.prizes.g1, prize: '30 triệu đồng' },
+                { name: 'Giải Nhì', numbers: currentData.prizes.g2, prize: '15 triệu đồng' },
+                { name: 'Giải Ba', numbers: currentData.prizes.g3, prize: '10 triệu đồng' },
+                { name: 'Giải Tư', numbers: currentData.prizes.g4, prize: '3 triệu đồng' },
+                { name: 'Giải Năm', numbers: currentData.prizes.g5, prize: '1 triệu đồng' },
+                { name: 'Giải Sáu', numbers: currentData.prizes.g6, prize: '400 ngàn đồng' },
+                { name: 'Giải Bảy', numbers: currentData.prizes.g7, prize: '200 ngàn đồng' },
+                { name: 'Giải Tám', numbers: currentData.prizes.g8, prize: '100 ngàn đồng' }
+            ];
+
+            let matches = [];
+            
+            allPrizes.forEach(prize => {
+                prize.numbers.forEach(num => {
+                    // Check last N digits match
+                    if (num.endsWith(input) || input.endsWith(num)) {
+                        matches.push({ ...prize, matchedNumber: num });
+                    }
+                });
+            });
+
+            if (matches.length > 0) {
+                resultDiv.className = 'check-result win';
+                resultDiv.innerHTML = `
+                    <h3>🎉 CHÚC MỪNG! BẠN ĐÃ TRÚNG!</h3>
+                    ${matches.map(m => `
+                        <p><strong>${m.name}</strong>: ${m.matchedNumber} - <span style="color: #ffd700">${m.prize}</span></p>
+                    `).join('')}
+                `;
+                showConfetti();
+            } else {
+                resultDiv.className = 'check-result lose';
+                resultDiv.innerHTML = `
+                    <p>😔 Số <strong>${input}</strong> không trúng giải nào.</p>
+                    <p>Chúc bạn may mắn lần sau!</p>
+                `;
+            }
+        }
+
+        // Confetti effect
+        function showConfetti() {
+            const canvas = document.getElementById('confetti');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            const pieces = [];
+            const colors = ['#e94560', '#ffd700', '#2ecc71', '#3498db', '#9b59b6', '#ff6b6b'];
+            
+            for (let i = 0; i < 150; i++) {
+                pieces.push({
+                    x: Math.random() * canvas.width,
+                    y: Math.random() * canvas.height - canvas.height,
+                    size: Math.random() * 10 + 5,
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    speed: Math.random() * 3 + 2,
+                    angle: Math.random() * Math.PI * 2,
+                    spin: Math.random() * 0.2 - 0.1
+                });
+            }
+
+            let frame = 0;
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                pieces.forEach(p => {
+                    p.y += p.speed;
+                    p.x += Math.sin(p.angle) * 2;
+                    p.angle += p.spin;
+                    
+                    ctx.save();
+                    ctx.translate(p.x, p.y);
+                    ctx.rotate(p.angle);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size);
+                    ctx.restore();
+                });
+
+                frame++;
+                if (frame < 180) {
+                    requestAnimationFrame(animate);
+                } else {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                }
+            }
+            animate();
+        }
+
+        // Enter key to check number
+        document.getElementById('check-number').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') checkNumber();
+        });
+
+        // Auto refresh every 2 minutes
+        setInterval(() => fetchLotteryData(), 2 * 60 * 1000);
+
+        // Initial load
+        fetchLotteryData();
+    </script>
+</body>
+</html>
